@@ -1,0 +1,31 @@
+{
+	"name": "split-payment-tracker",
+	"version": "1.0.0",
+	"description": "",
+	"type": "module",
+	"main": "dist/src/index.js",
+	"scripts": {
+		"build": "tsc",
+		"lint:check": "biome ci",
+		"dev:server": "tsx watch --env-file=.env src/index.ts",
+		"dev:browser": "tsx --env-file=.env devScripts/browserSync.ts",
+		"dev": "npm run dev:server & npm run dev:browser",
+		"start": "node --env-file=.env .",
+		"test": "vitest run"
+	},
+	"author": "",
+	"license": "MIT",
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.7",
+		"@types/express": "^5.0.6",
+		"@types/node": "^26.2.0",
+		"browser-sync": "^3.0.4",
+		"tsx": "^4.23.11",
+		"typescript": "^6.0.3",
+		"vitest": "^4.1.10"
+	},
+	"dependencies": {
+		"express": "^5.2.1",
+		"pug": "^3.0.4"
+	}
+}
