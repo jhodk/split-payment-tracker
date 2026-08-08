@@ -2,6 +2,7 @@
   "js/ts.tsdk.path": "node_modules/typescript/lib",
   "editor.codeActionsOnSave": {
     "source.organizeImports.biome": "always",
+    "source.removeUnusedImports": "explicit",
     "source.fixAll.biome": "always"
   }
 }

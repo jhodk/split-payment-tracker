@@ -1,0 +1,31 @@
+services:
+  mysql:
+    image: mariadb:11.8
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:3306:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - network
+    mem_limit: 500M
+    environment:
+      - DB_HOST=${DATABASE_HOST}
+      - DB_USER=${DATABASE_USER}
+      - MARIADB_ROOT_PASSWORD=${DATABASE_PASSWORD}
+      - MARIADB_DATABASE=${DATABASE_NAME}
+
+  redis:
+    image: redis:8.2.1-alpine3.22
+    volumes:
+    - redis_data:/data
+    networks:
+      - network
+
+volumes:
+  redis_data:
+  mysql_data:
+
+networks:
+  network:
+    driver: bridge

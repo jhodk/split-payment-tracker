@@ -10,6 +10,9 @@
 		"dev:server": "tsx watch --env-file=.env src/index.ts",
 		"dev:browser": "tsx --env-file=.env devScripts/browserSync.ts",
 		"dev": "npm run dev:server & npm run dev:browser",
+		"dev:dependencies:start": "docker compose -f docker-compose.local.yml up -d",
+		"dev:dependencies:stop": "docker compose -f docker-compose.local.yml down",
+		"db:migrate:ci": "prisma migrate deploy",
 		"start": "node --env-file=.env .",
 		"test": "vitest run"
 	},
@@ -20,11 +23,15 @@
 		"@types/express": "^5.0.6",
 		"@types/node": "^26.2.0",
 		"browser-sync": "^3.0.4",
+		"dotenv": "^17.4.2",
+		"prisma": "^7.9.1",
 		"tsx": "^4.23.11",
 		"typescript": "^6.0.3",
 		"vitest": "^4.1.10"
 	},
 	"dependencies": {
+		"@prisma/adapter-mariadb": "^7.9.1",
+		"@prisma/client": "^7.9.1",
 		"express": "^5.2.1",
 		"pug": "^3.0.4"
 	}
