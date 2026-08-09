@@ -1,5 +1,11 @@
 import { randomUUID } from 'node:crypto'
 
+if (!process.env.SESSION_SECRET) {
+	console.warn(
+		'Warning, no SESSION_SECRET set so defaulting to random UUID. Sessions will not persist through restarts!',
+	)
+}
+
 export const config = {
 	port: process.env.PORT ? parseInt(process.env.PORT, 10) : 3000,
 	browserSyncPort: process.env.BROWSER_SYNC_PORT,
@@ -12,6 +18,13 @@ export const config = {
 	},
 	sessionSecret: process.env.SESSION_SECRET ?? randomUUID(),
 	nodeEnv: process.env.NODE_ENV ?? 'development',
+	oauth: {
+		gcp: {
+			clientId: process.env.GCP_OAUTH_CLIENT_ID ?? '',
+			clientSecret: process.env.GCP_OAUTH_CLIENT_SECRET ?? '',
+		},
+		redirectUri: process.env.OAUTH_REDIRECT_URI ?? '',
+	},
 }
 
 export const isProduction = (): boolean => config.nodeEnv === 'production'

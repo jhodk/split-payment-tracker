@@ -1,6 +1,9 @@
 import express from 'express'
 import { config, isProduction } from './config.js'
+import { homeController } from './controllers/homeController.js'
+import { paymentController } from './controllers/paymentController.js'
 import { dbHealthCheck } from './database/prisma.js'
+import { requireLogin } from './middleware/requireLogin.js'
 import { setupSession } from './session/setupSession.js'
 
 console.log('Checking db connection...')
@@ -19,8 +22,11 @@ if (isProduction()) {
 	app.set('trust proxy', 1)
 }
 
-app.get('/', (_req, res) => {
-	res.render('index')
+app.use('/payments', requireLogin, paymentController)
+app.use(homeController)
+
+app.use((_req, res) => {
+	res.redirect('/login')
 })
 
 app.listen(config.port, () => {
