@@ -25,6 +25,7 @@ export const config = {
 		},
 		redirectUri: process.env.OAUTH_REDIRECT_URI ?? '',
 	},
+	fileHost: process.env.FILE_HOST ?? '',
 }
 
 export const isProduction = (): boolean => config.nodeEnv === 'production'

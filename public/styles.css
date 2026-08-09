@@ -1,0 +1,99 @@
+.payments {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding: 0;
+	list-style: none;
+}
+
+.payment {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.25rem 0;
+}
+
+.payment-date {
+	width: 2.5rem;
+	flex-shrink: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	line-height: 1.1;
+	color: #555555;
+}
+
+.payment-date-month {
+	font-size: 0.8rem;
+}
+
+.payment-date-day {
+	font-size: 1.2rem;
+}
+
+.payment-description {
+	flex: 1;
+}
+
+.payment-payer {
+	white-space: nowrap;
+	font-size: 0.9rem;
+	color: #555555;
+}
+
+.payment-balance {
+	white-space: nowrap;
+	font-size: 0.9rem;
+}
+
+.payment-lent {
+	color: green;
+}
+
+.payment-borrowed {
+	color: red;
+}
+
+.payment-details,
+.direction-details {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+}
+
+.payment-details {
+	flex-grow: 1;
+}
+
+.direction-details {
+	text-align: right;
+}
+
+.payment-category-icon {
+	width: 2.5rem;
+	height: 2.5rem;
+	object-fit: contain;
+	flex-shrink: 0;
+}
+
+@media (max-width: 500px) {
+	.payment-category-icon {
+		width: 2rem;
+		height: 2rem;
+	}
+}
+
+body {
+	margin: 0 auto;
+	max-width: 1200px;
+}
+
+html {
+	padding: 0 1rem;
+	font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.header {
+	text-align: center;
+	font-style: italic;
+}

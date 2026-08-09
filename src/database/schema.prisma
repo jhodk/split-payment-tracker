@@ -11,4 +11,45 @@ model User {
   id    Int    @id @default(autoincrement())
   email String @unique
   name  String
+
+  paymentsMade Payment[] @relation("PaymentPayer")
+  splits       PaymentSplit[]
+}
+
+model Payment {
+  id          Int      @id @default(autoincrement())
+  description String
+  amount      Decimal  @db.Decimal(12, 2)
+
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  payerId Int
+  payer   User @relation("PaymentPayer", fields: [payerId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  splits PaymentSplit[]
+}
+
+model PaymentSplit {
+  id Int @id @default(autoincrement())
+
+  paymentId Int
+  payment   Payment @relation(fields: [paymentId], references: [id])
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  amount Decimal @db.Decimal(12, 2)
+
+  @@unique([paymentId, userId])
+}
+
+model Category {
+  id       Int       @id
+  name     String    @unique
+  icon     String
+
+  payments Payment[]
 }

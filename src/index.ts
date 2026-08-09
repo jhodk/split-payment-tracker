@@ -17,11 +17,13 @@ await setupSession(app)
 
 app.set('view engine', 'pug')
 app.set('views', './src/views')
+app.use(express.urlencoded({ extended: true }))
 
 if (isProduction()) {
 	app.set('trust proxy', 1)
 }
 
+app.use(express.static('public'))
 app.use('/payments', requireLogin, paymentController)
 app.use(homeController)
 
