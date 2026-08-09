@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto'
+
 export const config = {
 	port: process.env.PORT ? parseInt(process.env.PORT, 10) : 3000,
 	browserSyncPort: process.env.BROWSER_SYNC_PORT,
@@ -8,4 +10,8 @@ export const config = {
 		dbName: process.env.DATABASE_NAME,
 		port: process.env.DATABASE_PORT,
 	},
+	sessionSecret: process.env.SESSION_SECRET ?? randomUUID(),
+	nodeEnv: process.env.NODE_ENV ?? 'development',
 }
+
+export const isProduction = (): boolean => config.nodeEnv === 'production'

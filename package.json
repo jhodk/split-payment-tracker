@@ -21,6 +21,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.7",
 		"@types/express": "^5.0.6",
+		"@types/express-session": "^1.19.0",
 		"@types/node": "^26.2.0",
 		"browser-sync": "^3.0.4",
 		"dotenv": "^17.4.2",
@@ -32,7 +33,10 @@
 	"dependencies": {
 		"@prisma/adapter-mariadb": "^7.9.1",
 		"@prisma/client": "^7.9.1",
+		"connect-redis": "^10.0.0",
 		"express": "^5.2.1",
-		"pug": "^3.0.4"
+		"express-session": "^1.19.0",
+		"pug": "^3.0.4",
+		"redis": "^6.2.0"
 	}
 }
