@@ -1,6 +1,6 @@
 import Big from 'big.js'
 import { config } from '../config.js'
-import type { Category, Payment } from '../database/generated/client.js'
+import type { Category, Payment, Prisma } from '../database/generated/client.js'
 import { prisma } from '../database/prisma.js'
 import { userService } from './userService.js'
 
@@ -25,6 +25,14 @@ type CalculateSplitsInput = {
 	amount: string
 	splitType: SplitType
 }
+
+type PaymentWithSplitsAndPayerAndCategory = Prisma.PaymentGetPayload<{
+  include: {
+    splits: true
+    payer: true
+	category: true
+  }
+}>
 
 const roundUpToPennies = (amount: Big): Big => {
 	return amount.round(2, Big.roundUp)
@@ -113,8 +121,8 @@ export const paymentService = {
 			{ userId: otherUserId, amount: otherAmount.toFixed(2) },
 		]
 	},
-	getById: async (id: number): Promise<Payment | null> => {
-		return prisma.payment.findUnique({
+	getById: async (id: number): Promise<PaymentWithSplitsAndPayerAndCategory | null> => {
+		const foo = prisma.payment.findUnique({
 			where: {
 				id,
 			},
@@ -124,6 +132,7 @@ export const paymentService = {
 				category: true,
 			},
 		})
+		return foo
 	},
 	getAll: async (userId: number) => {
 		const [payments, otherUser] = await Promise.all([

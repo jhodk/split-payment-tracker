@@ -76,6 +76,32 @@ paymentController.post('/', async (req, res) => {
 	return res.redirect('/')
 })
 
+paymentController.get('/:id', async (req, res) => {
+	const paymentId = Number(req.params.id)
+	const payment = await paymentService.getById(paymentId)
+	if (!payment) {
+		return res.status(404).send('Payment not found')
+	}
+	
+	// biome-ignore lint/style/noNonNullAssertion: user is authenticated
+	const userId = req.session.userId!
+	const user = await userService.getById(userId)
+	if (!user) {
+		throw new Error('Logged in user not found')
+	}
+	const otherUser = await userService.getOtherUser(user.id)
+	if (!otherUser) {
+		return res.status(400).send('No other user found')
+	}
+
+	res.render('payments/view', {
+		pageTitle: payment.description,
+		payment,
+		user,
+		otherUser,
+	})
+})
+
 paymentController.get('/:id/edit', async (req, res) => {
 	// biome-ignore lint/style/noNonNullAssertion: user is authenticated
 	const userId = req.session.userId!

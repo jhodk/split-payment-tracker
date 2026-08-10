@@ -2,7 +2,7 @@ extends ../layout.pug
 
 block content
   a(href='/payments') < Back
-  h1 Add payment
+  h1 Edit payment
 
   form(action=`/payments/${payment.id}/edit` method="post")
     input(type="hidden" name="categoryId" value=payment.categoryId || 2)
