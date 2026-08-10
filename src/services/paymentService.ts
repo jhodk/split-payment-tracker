@@ -17,11 +17,13 @@ type PaymentSplitInput = {
 	amount: string
 }
 
+export type SplitType = '100-0' | '50-50' | '0-100'
+
 type CalculateSplitsInput = {
 	payerId: number
 	userIds: number[]
 	amount: string
-	splitType: '100-0' | '50-50' | '0-100'
+	splitType: SplitType
 }
 
 const roundUpToPennies = (amount: Big): Big => {

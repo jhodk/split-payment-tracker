@@ -58,7 +58,7 @@ block content
       - const userAmount = Number(userSplit?.amount ?? 0)
       - const otherUserAmount = Number(otherUserSplit?.amount ?? 0)
       - const totalAmount = Number(payment.amount)
-      - const isFiftyFifty = userAmount > 0 && otherUserAmount > 0 && Math.abs(userAmount - otherUserAmount) < 0.01
+      - const isFiftyFifty = userAmount > 0 && otherUserAmount > 0 && Math.abs(userAmount - otherUserAmount) <= 0.01
       - const isUserPaysAll = userAmount === totalAmount
       - const isOtherUserPaysAll = otherUserAmount === totalAmount
 

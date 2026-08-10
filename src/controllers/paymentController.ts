@@ -1,6 +1,7 @@
 import * as express from 'express'
-import { paymentService } from '../services/paymentService.js'
+import { paymentService, type SplitType } from '../services/paymentService.js'
 import { userService } from '../services/userService.js'
+import { splitTypeForPayer } from '../helpers/splitHelper.js'
 
 // /payments
 export const paymentController = express.Router()
@@ -46,11 +47,15 @@ paymentController.get('/create', async (req, res) => {
 })
 
 paymentController.post('/', async (req, res) => {
+	// biome-ignore lint/style/noNonNullAssertion: user is authenticated
+	const userId = req.session.userId!
 	const payerId = Number(req.body.payerId)
 	const amount = req.body.amount
-	const splitType = req.body.split
 	const description = req.body.description
 	const categoryId = Number(req.body.categoryId)
+
+	// split type is expressed in terms of the current user, not the payer
+	let splitType = splitTypeForPayer(req.body.split as SplitType, userId, payerId)
 
 	const allUserIds = (await userService.getAll()).map((u) => u.id)
 	const splits = paymentService.calculateSplits({
@@ -101,17 +106,21 @@ paymentController.get('/:id/edit', async (req, res) => {
 })
 
 paymentController.post('/:id/edit', async (req, res) => {
+	// biome-ignore lint/style/noNonNullAssertion: user is authenticated
+	const userId = req.session.userId!
 	const paymentId = Number(req.params.id)
 	const payerId = Number(req.body.payerId)
 	const amount = req.body.amount
-	const splitType = req.body.split
 	const categoryId = Number(req.body.categoryId)
+	
+	// split type is expressed in terms of the current user, not the payer
+	let splitType = splitTypeForPayer(req.body.split as SplitType, userId, payerId)
 
-	const userIds = (await userService.getAll()).map((user) => user.id)
+	const allUserIds = (await userService.getAll()).map((u) => u.id)
 
 	const splits = paymentService.calculateSplits({
 		payerId,
-		userIds,
+		userIds: allUserIds,
 		amount,
 		splitType,
 	})

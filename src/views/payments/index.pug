@@ -6,7 +6,7 @@ block content
   if Number(summary.balance) > 0
     p #{summary.otherUserName} owes you £#{summary.balance}
   else if Number(summary.balance) < 0
-    p You owe #{summary.otherUserName} £#{Math.abs(Number(summary.balance))}
+    p You owe #{summary.otherUserName} £#{Math.abs(Number(summary.balance)).toFixed(2)}
   else
     p All settled
 
@@ -41,7 +41,7 @@ block content
           else if Number(payment.userBalance) < 0
             div.direction-details
               span.payment-balance.payment-borrowed you borrowed
-              span.payment-balance-amount.payment-borrowed £#{Math.abs(Number(payment.userBalance))}
+              span.payment-balance-amount.payment-borrowed £#{Math.abs(Number(payment.userBalance)).toFixed(2)}
 
           else
             span.payment-balance
