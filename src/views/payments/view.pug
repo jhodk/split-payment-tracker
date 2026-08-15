@@ -4,6 +4,7 @@ block content
   a(href='/payments') < Back to all payments
   div 
     img(src=prefixImageHost(payment.category.icon) alt=payment.category.name title=payment.category.name)
+    br
     span #{payment.category.name}
   h1 #{payment.description}
   p £#{Number(payment.amount).toFixed(2)}

@@ -2,6 +2,8 @@ import * as express from 'express'
 import { paymentService, type SplitType } from '../services/paymentService.js'
 import { userService } from '../services/userService.js'
 import { splitTypeForPayer } from '../helpers/splitHelper.js'
+import { categoryService } from '../services/categoryService.js'
+import { buildCategoryGroups } from '../helpers/viewHelper.js'
 
 // /payments
 export const paymentController = express.Router()
@@ -39,10 +41,13 @@ paymentController.get('/create', async (req, res) => {
 		throw new Error('No other user found')
 	}
 
+	const categories = await categoryService.getAll()
+
 	return res.render('payments/create', {
 		pageTitle: 'Add payment',
 		user,
 		otherUser,
+		categories: buildCategoryGroups(categories)
 	})
 })
 
@@ -124,15 +129,19 @@ paymentController.get('/:id/edit', async (req, res) => {
 		return res.status(400).send('No other user found')
 	}
 
+	const categories = await categoryService.getAll()
+
 	return res.render('payments/update', {
 		pageTitle: 'Edit payment',
 		payment,
 		user,
 		otherUser,
+		categories: buildCategoryGroups(categories)
 	})
 })
 
 paymentController.post('/:id/edit', async (req, res) => {
+	console.log(req.body)
 	// biome-ignore lint/style/noNonNullAssertion: user is authenticated
 	const userId = req.session.userId!
 	const paymentId = Number(req.params.id)

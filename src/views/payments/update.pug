@@ -5,7 +5,6 @@ block content
   h1 Edit payment
 
   form(action=`/payments/${payment.id}/edit` method="post")
-    input(type="hidden" name="categoryId" value=payment.categoryId || 2)
     
     div
       label(for="description") Description
@@ -28,6 +27,15 @@ block content
         step="0.01"
         required
       )
+
+    label(for="category") Category
+    br
+    select(name="categoryId")
+      each category in categories
+        optgroup(label=category.name)
+          each child in category.children
+            option(value=child.id, selected=child.id === payment.categoryId)= child.name
+
 
     div
       p Who paid?
