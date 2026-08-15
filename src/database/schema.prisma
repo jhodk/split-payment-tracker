@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client"
-  output   = "generated"
+  provider        = "prisma-client"
+  output          = "generated"
+  previewFeatures = ["strictUndefinedChecks"]
 }
 
 datasource db {
@@ -12,14 +13,16 @@ model User {
   email String @unique
   name  String
 
-  paymentsMade Payment[] @relation("PaymentPayer")
-  splits       PaymentSplit[]
+  paymentsMade    Payment[]      @relation("PaymentPayer")
+  paymentsCreated Payment[]      @relation("CreatedByUser")
+  paymentsUpdated Payment[]      @relation("UpdatedByUser")
+  splits          PaymentSplit[]
 }
 
 model Payment {
-  id          Int      @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   description String
-  amount      Decimal  @db.Decimal(12, 2)
+  amount      Decimal @db.Decimal(12, 2)
 
   categoryId Int
   category   Category @relation(fields: [categoryId], references: [id])
@@ -27,7 +30,13 @@ model Payment {
   payerId Int
   payer   User @relation("PaymentPayer", fields: [payerId], references: [id])
 
-  createdAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  createdById Int
+  createdBy   User     @relation("CreatedByUser", fields: [createdById], references: [id])
+
+  updatedAt   DateTime?
+  updatedById Int?
+  updatedBy   User?     @relation("UpdatedByUser", fields: [updatedById], references: [id])
 
   splits PaymentSplit[]
 }
@@ -47,9 +56,9 @@ model PaymentSplit {
 }
 
 model Category {
-  id       Int       @id
-  name     String    @unique
-  icon     String
+  id   Int    @id
+  name String @unique
+  icon String
 
   payments Payment[]
 }

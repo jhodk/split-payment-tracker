@@ -71,6 +71,7 @@ paymentController.post('/', async (req, res) => {
 		amount,
 		splits,
 		categoryId,
+		authorId: userId
 	})
 
 	return res.redirect('/')
@@ -94,7 +95,7 @@ paymentController.get('/:id', async (req, res) => {
 		return res.status(400).send('No other user found')
 	}
 
-	res.render('payments/view', {
+	return res.render('payments/view', {
 		pageTitle: payment.description,
 		payment,
 		user,
@@ -123,7 +124,7 @@ paymentController.get('/:id/edit', async (req, res) => {
 		return res.status(400).send('No other user found')
 	}
 
-	res.render('payments/update', {
+	return res.render('payments/update', {
 		pageTitle: 'Edit payment',
 		payment,
 		user,
@@ -157,11 +158,12 @@ paymentController.post('/:id/edit', async (req, res) => {
 		amount,
 		splits,
 		categoryId,
+		authorId: userId
 	})
 
-	res.redirect('/')
+	return res.redirect(`/payments/${paymentId}`)
 })
 
 paymentController.use((_req, res) => {
-	return res.redirect('/')
+	return res.redirect('/payments')
 })

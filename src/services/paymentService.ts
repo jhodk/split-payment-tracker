@@ -1,10 +1,10 @@
 import Big from 'big.js'
-import { config } from '../config.js'
-import type { Category, Payment, Prisma } from '../database/generated/client.js'
+import type { Payment, Prisma } from '../database/generated/client.js'
 import { prisma } from '../database/prisma.js'
 import { userService } from './userService.js'
 
 type CreatePaymentArgs = {
+	authorId: number
 	payerId: number
 	description: string
 	amount: string
@@ -39,20 +39,21 @@ const roundUpToPennies = (amount: Big): Big => {
 }
 
 export const paymentService = {
-	create: async ({ payerId, description, amount, splits, categoryId }: CreatePaymentArgs): Promise<Payment> => {
+	create: async ({ payerId, description, amount, splits, categoryId, authorId }: CreatePaymentArgs): Promise<Payment> => {
 		return await prisma.payment.create({
 			data: {
 				amount,
 				description,
 				categoryId,
 				payerId,
+				createdById: authorId,
 				splits: {
 					create: splits,
 				},
 			},
 		})
 	},
-	update: async (id: number, { payerId, description, amount, splits, categoryId }: CreatePaymentArgs): Promise<Payment> => {
+	update: async (id: number, { payerId, description, amount, splits, categoryId, authorId }: CreatePaymentArgs): Promise<Payment> => {
 		return prisma.$transaction(async (tx) => {
 			await tx.paymentSplit.deleteMany({
 				where: {
@@ -68,7 +69,9 @@ export const paymentService = {
 					payerId,
 					description,
 					amount,
-          categoryId,
+          			categoryId,
+					updatedById: authorId,
+					updatedAt: new Date().toISOString(),
 					splits: {
 						create: splits,
 					},
