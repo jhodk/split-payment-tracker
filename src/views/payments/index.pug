@@ -24,7 +24,7 @@ block content
               span.payment-date-day= payment.date.split(' ')[1]
 
             img.payment-category-icon(
-              src=payment.category.icon
+              src=prefixImageHost(payment.category.icon)
               alt=payment.category.name
               title=payment.category.name
             )

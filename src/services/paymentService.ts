@@ -38,13 +38,6 @@ const roundUpToPennies = (amount: Big): Big => {
 	return amount.round(2, Big.roundUp)
 }
 
-const mapCategory = (category: Category): Category => {
-	return {
-		...category,
-		icon: `${config.fileHost}${category.icon}`,
-	}
-}
-
 export const paymentService = {
 	create: async ({ payerId, description, amount, splits, categoryId }: CreatePaymentArgs): Promise<Payment> => {
 		return await prisma.payment.create({
@@ -170,7 +163,6 @@ export const paymentService = {
 					month: 'short',
 					day: '2-digit',
 				}),
-				category: mapCategory(payment.category),
 			}
 		})
 

@@ -3,11 +3,13 @@ extends ../layout.pug
 block content
   a(href='/payments') < Back
   div 
-    img(src=payment.category.icon alt=payment.category.name title=payment.category.name)
+    img(src=prefixImageHost(payment.category.icon) alt=payment.category.name title=payment.category.name)
     span #{payment.category.name}
   h1 #{payment.description}
   p £#{Number(payment.amount).toFixed(2)}
   p #{payment.createdAt.toLocaleDateString('en-GB', {month: 'short',day: '2-digit', year: 'numeric'})}
+  if payment.updatedAt
+    p Updated by #{payment.updatedById === user.id ? "You" : otherUser.name} on #{payment.updatedAt}
   p #{payment.payerId === user.id ? "You" : otherUser.name} paid £#{Number(payment.amount).toFixed(2)}
   ul
     li You owe £#{Number(payment.splits.find(s => s.userId === user.id).amount).toFixed(2)}

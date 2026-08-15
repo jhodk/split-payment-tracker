@@ -5,6 +5,7 @@ import { paymentController } from './controllers/paymentController.js'
 import { dbHealthCheck } from './database/prisma.js'
 import { requireLogin } from './middleware/requireLogin.js'
 import { setupSession } from './session/setupSession.js'
+import { prefixImageHost } from './helpers/viewHelper.js'
 
 console.log('Checking db connection...')
 await dbHealthCheck()
@@ -18,6 +19,9 @@ await setupSession(app)
 app.set('view engine', 'pug')
 app.set('views', './src/views')
 app.use(express.urlencoded({ extended: true }))
+app.locals = {
+	prefixImageHost
+}
 
 if (isProduction()) {
 	app.set('trust proxy', 1)
