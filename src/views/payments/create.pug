@@ -14,6 +14,17 @@ block content
         required
       )
 
+    script(type="module").
+      import { inferCategory } from '/categoryHelper.js'
+
+      document.querySelector('#description').addEventListener('input', (event) => {
+        const categoryId = inferCategory(event.target.value)
+
+        if (categoryId !== null) {
+          document.querySelector('#category').value = String(categoryId)
+        }
+      })
+
     div
       label(for="amount") Amount
       br
@@ -27,7 +38,7 @@ block content
 
     label(for="category") Category
     br
-    select(name="categoryId")
+    select#category(name="categoryId")
       each category in categories
         optgroup(label=category.name)
           each child in category.children
