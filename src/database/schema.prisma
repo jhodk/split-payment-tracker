@@ -57,8 +57,14 @@ model PaymentSplit {
 
 model Category {
   id   Int    @id
-  name String @unique
+  name String
   icon String
 
+  parentCategoryId Int?
+  parentCategory   Category?  @relation("CategoryHierarchy", fields: [parentCategoryId], references: [id])
+  childCategories  Category[] @relation("CategoryHierarchy")
+
   payments Payment[]
+
+  @@unique([parentCategoryId, name])
 }
