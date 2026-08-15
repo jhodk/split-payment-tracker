@@ -6,6 +6,12 @@ if (!process.env.SESSION_SECRET) {
 	)
 }
 
+if (!process.env.API_SECRET) {
+	console.warn(
+		'Warning, no API_SECRET set so defaulting to random UUID',
+	)
+}
+
 export const config = {
 	port: process.env.PORT ? parseInt(process.env.PORT, 10) : 3000,
 	browserSyncPort: process.env.BROWSER_SYNC_PORT,
@@ -26,6 +32,7 @@ export const config = {
 		redirectUri: process.env.OAUTH_REDIRECT_URI ?? '',
 	},
 	fileHost: process.env.FILE_HOST ?? '',
+	apiSecret: process.env.API_SECRET ?? randomUUID(),
 }
 
 export const isProduction = (): boolean => config.nodeEnv === 'production'

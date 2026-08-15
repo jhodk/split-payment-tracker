@@ -6,6 +6,8 @@ import { dbHealthCheck } from './database/prisma.js'
 import { requireLogin } from './middleware/requireLogin.js'
 import { setupSession } from './session/setupSession.js'
 import { prefixImageHost } from './helpers/viewHelper.js'
+import { apiController } from './controllers/apiController.js'
+import { requireBearerAuth } from './middleware/requireBearerAuth.js'
 
 console.log('Checking db connection...')
 await dbHealthCheck()
@@ -18,6 +20,7 @@ await setupSession(app)
 
 app.set('view engine', 'pug')
 app.set('views', './src/views')
+app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.locals = {
 	prefixImageHost
@@ -29,6 +32,7 @@ if (isProduction()) {
 
 app.use(express.static('public'))
 app.use('/payments', requireLogin, paymentController)
+app.use('/api', requireBearerAuth, apiController)
 app.use(homeController)
 
 app.use((_req, res) => {
