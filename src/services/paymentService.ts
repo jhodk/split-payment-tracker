@@ -27,11 +27,11 @@ type CalculateSplitsInput = {
 }
 
 type PaymentWithSplitsAndPayerAndCategory = Prisma.PaymentGetPayload<{
-  include: {
-    splits: true
-    payer: true
-	category: true
-  }
+	include: {
+		splits: true
+		payer: true
+		category: true
+	}
 }>
 
 const roundUpToPennies = (amount: Big): Big => {
@@ -39,7 +39,14 @@ const roundUpToPennies = (amount: Big): Big => {
 }
 
 export const paymentService = {
-	create: async ({ payerId, description, amount, splits, categoryId, authorId }: CreatePaymentArgs): Promise<Payment> => {
+	create: async ({
+		payerId,
+		description,
+		amount,
+		splits,
+		categoryId,
+		authorId,
+	}: CreatePaymentArgs): Promise<Payment> => {
 		return await prisma.payment.create({
 			data: {
 				amount,
@@ -53,7 +60,10 @@ export const paymentService = {
 			},
 		})
 	},
-	update: async (id: number, { payerId, description, amount, splits, categoryId, authorId }: CreatePaymentArgs): Promise<Payment> => {
+	update: async (
+		id: number,
+		{ payerId, description, amount, splits, categoryId, authorId }: CreatePaymentArgs,
+	): Promise<Payment> => {
 		return prisma.$transaction(async (tx) => {
 			await tx.paymentSplit.deleteMany({
 				where: {
@@ -69,7 +79,7 @@ export const paymentService = {
 					payerId,
 					description,
 					amount,
-          			categoryId,
+					categoryId,
 					updatedById: authorId,
 					updatedAt: new Date().toISOString(),
 					splits: {

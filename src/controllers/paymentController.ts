@@ -47,7 +47,7 @@ paymentController.get('/create', async (req, res) => {
 		pageTitle: 'Add payment',
 		user,
 		otherUser,
-		categories: buildCategoryGroups(categories)
+		categories: buildCategoryGroups(categories),
 	})
 })
 
@@ -60,7 +60,7 @@ paymentController.post('/', async (req, res) => {
 	const categoryId = Number(req.body.categoryId)
 
 	// split type is expressed in terms of the current user, not the payer
-	let splitType = splitTypeForPayer(req.body.split as SplitType, userId, payerId)
+	const splitType = splitTypeForPayer(req.body.split as SplitType, userId, payerId)
 
 	const allUserIds = (await userService.getAll()).map((u) => u.id)
 	const splits = paymentService.calculateSplits({
@@ -76,7 +76,7 @@ paymentController.post('/', async (req, res) => {
 		amount,
 		splits,
 		categoryId,
-		authorId: userId
+		authorId: userId,
 	})
 
 	return res.redirect('/')
@@ -88,7 +88,7 @@ paymentController.get('/:id', async (req, res) => {
 	if (!payment) {
 		return res.status(404).send('Payment not found')
 	}
-	
+
 	// biome-ignore lint/style/noNonNullAssertion: user is authenticated
 	const userId = req.session.userId!
 	const user = await userService.getById(userId)
@@ -136,7 +136,7 @@ paymentController.get('/:id/edit', async (req, res) => {
 		payment,
 		user,
 		otherUser,
-		categories: buildCategoryGroups(categories)
+		categories: buildCategoryGroups(categories),
 	})
 })
 
@@ -148,9 +148,9 @@ paymentController.post('/:id/edit', async (req, res) => {
 	const payerId = Number(req.body.payerId)
 	const amount = req.body.amount
 	const categoryId = Number(req.body.categoryId)
-	
+
 	// split type is expressed in terms of the current user, not the payer
-	let splitType = splitTypeForPayer(req.body.split as SplitType, userId, payerId)
+	const splitType = splitTypeForPayer(req.body.split as SplitType, userId, payerId)
 
 	const allUserIds = (await userService.getAll()).map((u) => u.id)
 
@@ -167,7 +167,7 @@ paymentController.post('/:id/edit', async (req, res) => {
 		amount,
 		splits,
 		categoryId,
-		authorId: userId
+		authorId: userId,
 	})
 
 	return res.redirect(`/payments/${paymentId}`)

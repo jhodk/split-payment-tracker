@@ -7,9 +7,7 @@ if (!process.env.SESSION_SECRET) {
 }
 
 if (!process.env.API_SECRET) {
-	console.warn(
-		'Warning, no API_SECRET set so defaulting to random UUID',
-	)
+	console.warn('Warning, no API_SECRET set so defaulting to random UUID')
 }
 
 export const config = {

@@ -1,44 +1,44 @@
 {
-  "name": "split-payment-tracker",
-  "version": "1.0.0",
-  "description": "",
-  "type": "module",
-  "main": "dist/src/index.js",
-  "scripts": {
-    "build": "tsc",
-    "lint:check": "biome ci",
-    "dev:server": "tsx watch --env-file=.env src/index.ts",
-    "dev:browser": "tsx --env-file=.env devScripts/browserSync.ts",
-    "dev": "npm run dev:server & npm run dev:browser",
-    "dev:dependencies:start": "docker compose -f docker-compose.local.yml up -d",
-    "dev:dependencies:stop": "docker compose -f docker-compose.local.yml down",
-    "db:migrate:ci": "prisma migrate deploy",
-    "start": "node --env-file=.env .",
-    "test": "vitest run"
-  },
-  "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "@biomejs/biome": "^2.5.7",
-    "@types/big.js": "^7.0.0",
-    "@types/express": "^5.0.6",
-    "@types/express-session": "^1.19.0",
-    "@types/node": "^26.2.0",
-    "browser-sync": "^3.0.4",
-    "dotenv": "^17.4.2",
-    "prisma": "^7.9.1",
-    "tsx": "^4.23.11",
-    "typescript": "^6.0.3",
-    "vitest": "^4.1.10"
-  },
-  "dependencies": {
-    "@prisma/adapter-mariadb": "^7.9.1",
-    "@prisma/client": "^7.9.1",
-    "big.js": "^7.0.1",
-    "connect-redis": "^10.0.0",
-    "express": "^5.2.1",
-    "express-session": "^1.19.0",
-    "pug": "^3.0.4",
-    "redis": "^6.2.0"
-  }
+	"name": "split-payment-tracker",
+	"version": "1.0.0",
+	"description": "",
+	"type": "module",
+	"main": "dist/src/index.js",
+	"scripts": {
+		"build": "tsc",
+		"lint:check": "biome ci",
+		"dev:server": "tsx watch --env-file=.env src/index.ts",
+		"dev:browser": "tsx --env-file=.env devScripts/browserSync.ts",
+		"dev": "npm run dev:server & npm run dev:browser",
+		"dev:dependencies:start": "docker compose -f docker-compose.local.yml up -d",
+		"dev:dependencies:stop": "docker compose -f docker-compose.local.yml down",
+		"db:migrate:ci": "prisma migrate deploy",
+		"start": "node --env-file=.env .",
+		"test": "vitest run"
+	},
+	"author": "",
+	"license": "MIT",
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.7",
+		"@types/big.js": "^7.0.0",
+		"@types/express": "^5.0.6",
+		"@types/express-session": "^1.19.0",
+		"@types/node": "^26.2.0",
+		"browser-sync": "^3.0.4",
+		"dotenv": "^17.4.2",
+		"prisma": "^7.9.1",
+		"tsx": "^4.23.11",
+		"typescript": "^6.0.3",
+		"vitest": "^4.1.10"
+	},
+	"dependencies": {
+		"@prisma/adapter-mariadb": "^7.9.1",
+		"@prisma/client": "^7.9.1",
+		"big.js": "^7.0.1",
+		"connect-redis": "^10.0.0",
+		"express": "^5.2.1",
+		"express-session": "^1.19.0",
+		"pug": "^3.0.4",
+		"redis": "^6.2.0"
+	}
 }

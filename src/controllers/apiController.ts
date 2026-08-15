@@ -13,7 +13,7 @@ apiController.post('/v1/payments', async (req, res) => {
 	const categoryId = Number(req.body.categoryId)
 
 	// split type is expressed in terms of the current user, not the payer
-	let splitType = splitTypeForPayer(req.body.split as SplitType, userId, payerId)
+	const splitType = splitTypeForPayer(req.body.split as SplitType, userId, payerId)
 
 	const allUserIds = (await userService.getAll()).map((u) => u.id)
 	const splits = paymentService.calculateSplits({
@@ -29,8 +29,8 @@ apiController.post('/v1/payments', async (req, res) => {
 		amount,
 		splits,
 		categoryId,
-		authorId: userId
+		authorId: userId,
 	})
 
-	return res.status(200).json({id: payment.id})
+	return res.status(200).json({ id: payment.id })
 })

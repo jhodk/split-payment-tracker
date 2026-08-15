@@ -23,7 +23,7 @@ app.set('views', './src/views')
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.locals = {
-	prefixImageHost
+	prefixImageHost,
 }
 
 if (isProduction()) {

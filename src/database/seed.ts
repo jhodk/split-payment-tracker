@@ -298,26 +298,26 @@ const categories = [
 ]
 
 async function main() {
-  for (const category of categories) {
-    const existing = await prisma.category.findUnique({
-      where: { id: category.id },
-    })
+	for (const category of categories) {
+		const existing = await prisma.category.findUnique({
+			where: { id: category.id },
+		})
 
-    if (existing) {
-      await prisma.category.update({
-        where: { id: category.id },
-        data: {
-          name: category.name,
-          icon: category.icon,
-          parentCategoryId: category.parentCategoryId ?? null,
-        },
-      })
-    } else {
-      await prisma.category.create({
-        data: category,
-      })
-    }
-  }
+		if (existing) {
+			await prisma.category.update({
+				where: { id: category.id },
+				data: {
+					name: category.name,
+					icon: category.icon,
+					parentCategoryId: category.parentCategoryId ?? null,
+				},
+			})
+		} else {
+			await prisma.category.create({
+				data: category,
+			})
+		}
+	}
 }
 
 main()
