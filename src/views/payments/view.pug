@@ -13,8 +13,18 @@ block content
     p Updated by #{payment.updatedById === user.id ? "you" : otherUser.name} at #{payment.updatedAt.toISOString().slice(0, 19).replace('T', ' ') + ' UTC'}
   p #{payment.payerId === user.id ? "You" : otherUser.name} paid £#{Number(payment.amount).toFixed(2)}
   ul
-    li You owe £#{Number(payment.splits.find(s => s.userId === user.id).amount).toFixed(2)}
-    li #{otherUser.name} owes £#{Number(payment.splits.find(s => s.userId === otherUser.id).amount).toFixed(2)}
+    - const userAmount = Number(payment.splits.find(s => s.userId === user.id).amount)
+    - const otherAmount = Number(payment.splits.find(s => s.userId === otherUser.id).amount)
+
+    if userAmount === 0
+        li You paid £#{Number(payment.amount).toFixed(2)}
+    else
+        li You owe £#{userAmount.toFixed(2)}
+
+    if otherAmount === 0
+        li #{otherUser.name} paid £#{Number(payment.amount).toFixed(2)}
+    else
+        li #{otherUser.name} owes £#{otherAmount.toFixed(2)}
 
   br
   a(href=`/payments/${payment.id}/edit`) Edit
