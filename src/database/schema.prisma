@@ -10,60 +10,62 @@ datasource db {
 
 model User {
   id    Int    @id @default(autoincrement())
-  email String @unique
+  email String
   name  String
 
   paymentsMade    Payment[]      @relation("PaymentPayer")
   paymentsCreated Payment[]      @relation("CreatedByUser")
   paymentsUpdated Payment[]      @relation("UpdatedByUser")
-  splits          PaymentSplit[]
+  ledgerEntries          LedgerEntry[]
+
+  @@unique(email)
 }
 
 model Payment {
   id          Int     @id @default(autoincrement())
   description String
   amount      Decimal @db.Decimal(12, 2)
-
   categoryId Int
-  category   Category @relation(fields: [categoryId], references: [id])
-
   payerId Int
-  payer   User @relation("PaymentPayer", fields: [payerId], references: [id])
-
   createdAt   DateTime @default(now())
   createdById Int
-  createdBy   User     @relation("CreatedByUser", fields: [createdById], references: [id])
-
   updatedAt   DateTime?
   updatedById Int?
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  payer   User @relation("PaymentPayer", fields: [payerId], references: [id])
+  createdBy   User     @relation("CreatedByUser", fields: [createdById], references: [id])
   updatedBy   User?     @relation("UpdatedByUser", fields: [updatedById], references: [id])
 
-  splits PaymentSplit[]
+  ledgerEntries LedgerEntry[]
 }
 
-model PaymentSplit {
+enum LedgerEntryType {
+  DEBIT
+  CREDIT
+}
+
+model LedgerEntry {
   id Int @id @default(autoincrement())
-
   paymentId Int
-  payment   Payment @relation(fields: [paymentId], references: [id])
-
   userId Int
-  user   User @relation(fields: [userId], references: [id])
-
+  direction LedgerEntryType
   amount Decimal @db.Decimal(12, 2)
 
-  @@unique([paymentId, userId])
+  payment   Payment @relation(fields: [paymentId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
+
+  @@unique([paymentId, userId, direction])
 }
 
 model Category {
   id   Int    @id
   name String
   icon String
-
   parentCategoryId Int?
-  parentCategory   Category?  @relation("CategoryHierarchy", fields: [parentCategoryId], references: [id])
-  childCategories  Category[] @relation("CategoryHierarchy")
 
+  childCategories  Category[] @relation("CategoryHierarchy")
+  parentCategory   Category?  @relation("CategoryHierarchy", fields: [parentCategoryId], references: [id])
   payments Payment[]
 
   @@unique([parentCategoryId, name])
