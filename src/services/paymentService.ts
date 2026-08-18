@@ -159,9 +159,12 @@ export const paymentService = {
 					ledgerEntries: true,
 					category: true,
 				},
-				orderBy: {
-					createdAt: 'desc',
-				},
+				orderBy: [
+					{
+						date: 'desc',
+					},
+					{ createdAt: 'desc' },
+				],
 			}),
 			userService.getOtherUser(userId),
 		])
