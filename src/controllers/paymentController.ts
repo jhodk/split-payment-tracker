@@ -1,9 +1,9 @@
 import * as express from 'express'
+import { splitTypeForPayer } from '../helpers/splitHelper.js'
+import { buildCategoryGroups } from '../helpers/viewHelper.js'
+import { categoryService } from '../services/categoryService.js'
 import { paymentService, type SplitType } from '../services/paymentService.js'
 import { userService } from '../services/userService.js'
-import { splitTypeForPayer } from '../helpers/splitHelper.js'
-import { categoryService } from '../services/categoryService.js'
-import { buildCategoryGroups } from '../helpers/viewHelper.js'
 
 // /payments
 export const paymentController = express.Router()
@@ -58,24 +58,26 @@ paymentController.post('/', async (req, res) => {
 	const amount = req.body.amount
 	const description = req.body.description
 	const categoryId = Number(req.body.categoryId)
+	const date = new Date(req.body.date)
 
 	// split type is expressed in terms of the current user, not the payer
 	const splitType = splitTypeForPayer(req.body.split as SplitType, userId, payerId)
 
 	const allUserIds = (await userService.getAll()).map((u) => u.id)
-	const splits = paymentService.calculateSplits({
+	const splits = paymentService.calculateLedgerEntries({
 		amount,
 		payerId,
-		splitType,
+		splitTypeFromPerspectiveOfPayer: splitType,
 		userIds: allUserIds,
 	})
 
 	await paymentService.create({
-		payerId,
 		description,
 		amount,
-		splits,
 		categoryId,
+		payerId,
+		date,
+		ledgerEntries: splits,
 		authorId: userId,
 	})
 
@@ -141,33 +143,34 @@ paymentController.get('/:id/edit', async (req, res) => {
 })
 
 paymentController.post('/:id/edit', async (req, res) => {
-	console.log(req.body)
 	// biome-ignore lint/style/noNonNullAssertion: user is authenticated
 	const userId = req.session.userId!
 	const paymentId = Number(req.params.id)
 	const payerId = Number(req.body.payerId)
 	const amount = req.body.amount
 	const categoryId = Number(req.body.categoryId)
+	const date = new Date(req.body.date)
 
 	// split type is expressed in terms of the current user, not the payer
 	const splitType = splitTypeForPayer(req.body.split as SplitType, userId, payerId)
 
 	const allUserIds = (await userService.getAll()).map((u) => u.id)
 
-	const splits = paymentService.calculateSplits({
+	const splits = paymentService.calculateLedgerEntries({
 		payerId,
 		userIds: allUserIds,
 		amount,
-		splitType,
+		splitTypeFromPerspectiveOfPayer: splitType,
 	})
 
 	await paymentService.update(paymentId, {
 		payerId,
 		description: req.body.description,
 		amount,
-		splits,
+		ledgerEntries: splits,
 		categoryId,
 		authorId: userId,
+		date,
 	})
 
 	return res.redirect(`/payments/${paymentId}`)

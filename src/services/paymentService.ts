@@ -1,5 +1,5 @@
 import Big from 'big.js'
-import type { Payment, Prisma } from '../database/generated/client.js'
+import type { LedgerEntry, LedgerEntryType, Payment, Prisma } from '../database/generated/client.js'
 import { prisma } from '../database/prisma.js'
 import { userService } from './userService.js'
 
@@ -8,12 +8,14 @@ type CreatePaymentArgs = {
 	payerId: number
 	description: string
 	amount: string
-	splits: PaymentSplitInput[]
+	ledgerEntries: LedgerEntryInput[]
 	categoryId: number
+	date: Date
 }
 
-type PaymentSplitInput = {
+type LedgerEntryInput = {
 	userId: number
+	direction: LedgerEntryType
 	amount: string
 }
 
@@ -23,12 +25,12 @@ type CalculateSplitsInput = {
 	payerId: number
 	userIds: number[]
 	amount: string
-	splitType: SplitType
+	splitTypeFromPerspectiveOfPayer: SplitType
 }
 
-type PaymentWithSplitsAndPayerAndCategory = Prisma.PaymentGetPayload<{
+type PaymentWithLedgerEntriesAndPayerAndCategory = Prisma.PaymentGetPayload<{
 	include: {
-		splits: true
+		ledgerEntries: true
 		payer: true
 		category: true
 	}
@@ -43,29 +45,31 @@ export const paymentService = {
 		payerId,
 		description,
 		amount,
-		splits,
+		ledgerEntries,
 		categoryId,
 		authorId,
+		date,
 	}: CreatePaymentArgs): Promise<Payment> => {
 		return await prisma.payment.create({
 			data: {
-				amount,
 				description,
+				amount,
 				categoryId,
 				payerId,
+				date,
 				createdById: authorId,
-				splits: {
-					create: splits,
+				ledgerEntries: {
+					create: ledgerEntries,
 				},
 			},
 		})
 	},
 	update: async (
 		id: number,
-		{ payerId, description, amount, splits, categoryId, authorId }: CreatePaymentArgs,
+		{ payerId, description, amount, ledgerEntries, categoryId, authorId, date }: CreatePaymentArgs,
 	): Promise<Payment> => {
 		return prisma.$transaction(async (tx) => {
-			await tx.paymentSplit.deleteMany({
+			await tx.ledgerEntry.deleteMany({
 				where: {
 					paymentId: id,
 				},
@@ -76,20 +80,26 @@ export const paymentService = {
 					id,
 				},
 				data: {
-					payerId,
 					description,
 					amount,
 					categoryId,
+					payerId,
+					date,
 					updatedById: authorId,
 					updatedAt: new Date().toISOString(),
-					splits: {
-						create: splits,
+					ledgerEntries: {
+						create: ledgerEntries,
 					},
 				},
 			})
 		})
 	},
-	calculateSplits: ({ payerId, userIds, amount, splitType }: CalculateSplitsInput): PaymentSplitInput[] => {
+	calculateLedgerEntries: ({
+		payerId,
+		userIds,
+		amount,
+		splitTypeFromPerspectiveOfPayer: splitType,
+	}: CalculateSplitsInput): LedgerEntryInput[] => {
 		const payerIndex = userIds.indexOf(payerId)
 		if (payerIndex === -1) {
 			throw new Error('Payer must be one of the users')
@@ -107,15 +117,15 @@ export const paymentService = {
 
 		if (splitType === '100-0') {
 			return [
-				{ userId: payerId, amount: total.toFixed(2) },
-				{ userId: otherUserId, amount: '0.00' },
+				{ userId: payerId, direction: 'DEBIT', amount: total.toFixed(2) },
+				{ userId: payerId, direction: 'CREDIT', amount: total.toFixed(2) },
 			]
 		}
 
 		if (splitType === '0-100') {
 			return [
-				{ userId: payerId, amount: '0.00' },
-				{ userId: otherUserId, amount: total.toFixed(2) },
+				{ userId: payerId, direction: 'DEBIT', amount: total.toFixed(2) },
+				{ userId: otherUserId, direction: 'CREDIT', amount: total.toFixed(2) },
 			]
 		}
 
@@ -123,18 +133,19 @@ export const paymentService = {
 		const payerAmount = total.minus(otherAmount)
 
 		return [
-			{ userId: payerId, amount: payerAmount.toFixed(2) },
-			{ userId: otherUserId, amount: otherAmount.toFixed(2) },
+			{ userId: payerId, direction: 'DEBIT', amount: total.toFixed(2) },
+			{ userId: payerId, direction: 'CREDIT', amount: payerAmount.toFixed(2) },
+			{ userId: otherUserId, direction: 'CREDIT', amount: otherAmount.toFixed(2) },
 		]
 	},
-	getById: async (id: number): Promise<PaymentWithSplitsAndPayerAndCategory | null> => {
+	getById: async (id: number): Promise<PaymentWithLedgerEntriesAndPayerAndCategory | null> => {
 		const foo = prisma.payment.findUnique({
 			where: {
 				id,
 			},
 			include: {
 				payer: true,
-				splits: true,
+				ledgerEntries: true,
 				category: true,
 			},
 		})
@@ -145,7 +156,7 @@ export const paymentService = {
 			prisma.payment.findMany({
 				include: {
 					payer: true,
-					splits: true,
+					ledgerEntries: true,
 					category: true,
 				},
 				orderBy: {
@@ -156,23 +167,21 @@ export const paymentService = {
 		])
 
 		const paymentsWithBalance = payments.map((payment) => {
-			const split = payment.splits.find((split) => split.userId === userId)
+			const paymentAmount = new Big(payment.amount.toString())
 
-			if (!split) {
-				throw new Error(`User ${userId} is not included in payment ${payment.id}`)
-			}
+			const userBalance = payment.ledgerEntries
+				.filter((ledgerEntry) => ledgerEntry.userId === userId)
+				.reduce((acc: Big, next: LedgerEntry) => {
+					const amount = new Big(next.amount.toString()).times(next.direction === 'CREDIT' ? -1 : 1)
 
-			const amount = new Big(payment.amount.toString())
-			const splitAmount = new Big(split.amount.toString())
-
-			const userBalance = payment.payerId === userId ? amount.minus(splitAmount) : splitAmount.times(-1)
+					return acc.add(amount)
+				}, new Big(0))
 
 			return {
 				...payment,
-				amount: amount.toFixed(2),
-				splitAmount: splitAmount.toFixed(2),
+				amount: paymentAmount.toFixed(2),
 				userBalance: userBalance.toFixed(2),
-				date: payment.createdAt.toLocaleDateString('en-US', {
+				date: payment.date.toLocaleDateString('en-US', {
 					month: 'short',
 					day: '2-digit',
 				}),

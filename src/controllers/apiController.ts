@@ -17,7 +17,7 @@ apiController.post('/v1/payments', async (req, res) => {
 	const ledgerEntries = paymentService.calculateLedgerEntries({
 		amount,
 		payerId,
-		splitType: '50-50',
+		splitTypeFromPerspectiveOfPayer: '50-50',
 		userIds: allUserIds,
 	})
 
@@ -28,7 +28,6 @@ apiController.post('/v1/payments', async (req, res) => {
 			categoryId,
 			payerId,
 			date,
-			createdAt: new Date(),
 			createdById,
 
 			ledgerEntries: {
