@@ -24,7 +24,7 @@ block content
             p #{payment.createdAt.toLocaleDateString('en-GB', { month: 'long',  year: 'numeric'})}
           - lastCreatedMonthYear = payment.createdAt.toLocaleDateString('en-GB', { month: 'long',  year: 'numeric'})
         li.payment
-          a(href=`/payments/${payment.id}`)
+          a(href=`/payments/${payment.id}` id=`payment-${payment.id}`)
             div.payment-date
               span.payment-date-month= payment.date.split(' ')[0]
               span.payment-date-day= payment.date.split(' ')[1]
@@ -51,8 +51,8 @@ block content
                 span.payment-balance-amount.payment-borrowed £#{Math.abs(Number(payment.userBalance)).toFixed(2)}
 
             else
-              span.payment-balance
-                | Settled
+              span.direction-details
+                | #{payment.payerId === userId ? 'You' : payment.payer.name} paid for #{payment.payerId === userId ? 'yourself' : 'themselves'}
 
   else
     p No payments yet.

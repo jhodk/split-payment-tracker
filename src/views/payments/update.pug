@@ -1,113 +1,12 @@
 extends ../layout.pug
+include _form-content.pug
 
 block content
-  a(href='/payments') < Back to all payments
+  a(href=`/payments#payment-${payment.id}`) &lt; Back
   h1 Edit payment
 
   form(action=`/payments/${payment.id}/edit` method="post")
-    
-    div
-      label(for="description") Description
-      br
-      input#description(
-        type="text"
-        name="description"
-        value=payment.description
-        required
-      )
-
-    script(type="module").
-      import { inferCategory } from '/categoryHelper.js'
-
-      document.querySelector('#description').addEventListener('input', (event) => {
-        const categoryId = inferCategory(event.target.value)
-
-        if (categoryId !== null) {
-          document.querySelector('#category').value = String(categoryId)
-        }
-      })
-
-    div
-      label(for="amount") Amount
-      br
-      input#amount(
-        type="number"
-        name="amount"
-        value=payment.amount
-        min="0.01"
-        step="0.01"
-        required
-      )
-
-    label(for="category") Category
-    br
-    select#category(name="categoryId")
-      each category in categories
-        optgroup(label=category.name)
-          each child in category.children
-            option(value=child.id, selected=child.id === payment.categoryId)= child.name
-
-
-    div
-      p Who paid?
-
-      label
-        input(
-          type="radio"
-          name="payerId"
-          value=user.id
-          checked=payment.payerId === user.id
-        )
-        | #{user.name} (you)
-
-      label
-        input(
-          type="radio"
-          name="payerId"
-          value=otherUser.id
-          checked=payment.payerId === otherUser.id
-        )
-        | #{otherUser.name}
-
-    div
-      p How should it be split?
-
-      - const userSplit = payment.splits.find(split => split.userId === user.id)
-      - const otherUserSplit = payment.splits.find(split => split.userId === otherUser.id)
-      - const userAmount = Number(userSplit?.amount ?? 0)
-      - const otherUserAmount = Number(otherUserSplit?.amount ?? 0)
-      - const totalAmount = Number(payment.amount)
-      - const isFiftyFifty = userAmount > 0 && otherUserAmount > 0 && Math.abs(userAmount - otherUserAmount) <= 0.01
-      - const isUserPaysAll = userAmount === totalAmount
-      - const isOtherUserPaysAll = otherUserAmount === totalAmount
-
-      label
-        input(
-          type="radio"
-          name="split"
-          value="50-50"
-          checked=isFiftyFifty
-        )
-        | 50 / 50
-
-      label
-        input(
-          type="radio"
-          name="split"
-          value="100-0"
-          checked=isUserPaysAll
-        )
-        | #{user.name} pays 100%
-
-      label
-        input(
-          type="radio"
-          name="split"
-          value="0-100"
-          checked=isOtherUserPaysAll
-        )
-        | #{otherUser.name} pays 100%
-
+    +paymentFormContent(true)
     br
     div
       a(href=`/payments/${payment.id}`) Cancel

@@ -1,30 +1,35 @@
 extends ../layout.pug
 
 block content
-  a(href='/payments') < Back to all payments
+  a(href=`/payments#payment-${payment.id}`) &lt; Back
   div 
     img(src=prefixImageHost(payment.category.icon) alt=payment.category.name title=payment.category.name)
     br
     span #{payment.category.name}
   h1 #{payment.description}
-  p £#{Number(payment.amount).toFixed(2)}
-  p Added by #{payment.createdById === user.id ? "you" : otherUser.name} on #{payment.createdAt.toLocaleDateString('en-GB', {month: 'short',day: '2-digit', year: 'numeric'})}
+  h3 £#{Number(payment.amount).toFixed(2)}
+  if payment.date.toISOString().slice(0, 10) !== payment.createdAt.toISOString().slice(0, 10)
+    p #{payment.date.toLocaleDateString('en-GB', {month: 'short', day: '2-digit', year: 'numeric'})}
+  p Added by #{payment.createdById === user.id ? "you" : otherUser.name} on #{payment.createdAt.toLocaleDateString('en-GB', {month: 'short', day: '2-digit', year: 'numeric'})}
   if payment.updatedAt
     p Updated by #{payment.updatedById === user.id ? "you" : otherUser.name} at #{payment.updatedAt.toISOString().slice(0, 19).replace('T', ' ') + ' UTC'}
   p #{payment.payerId === user.id ? "You" : otherUser.name} paid £#{Number(payment.amount).toFixed(2)}
+  
   ul
-    - const userAmount = Number(payment.splits.find(s => s.userId === user.id).amount)
-    - const otherAmount = Number(payment.splits.find(s => s.userId === otherUser.id).amount)
+    - const userAmount = payment.ledgerEntries.filter(e => e.direction === 'CREDIT').find(e => e.userId === user.id)?.amount
+    - const otherUserAmount = payment.ledgerEntries.filter(e => e.direction === 'CREDIT').find(e => e.userId === otherUser.id)?.amount
 
-    if userAmount === 0
-        li You paid £#{Number(payment.amount).toFixed(2)}
-    else
-        li You owe £#{userAmount.toFixed(2)}
+    if payment.ledgerEntries.find(e => e.userId === user.id)  
+      if userAmount === undefined
+          li You paid £#{Number(payment.amount).toFixed(2)}
+      else
+          li You owe £#{userAmount.toFixed(2)}
 
-    if otherAmount === 0
-        li #{otherUser.name} paid £#{Number(payment.amount).toFixed(2)}
-    else
-        li #{otherUser.name} owes £#{otherAmount.toFixed(2)}
+    if payment.ledgerEntries.find(e => e.userId === otherUser.id)
+      if otherUserAmount === undefined
+          li #{otherUser.name} paid £#{Number(payment.amount).toFixed(2)}
+      else
+          li #{otherUser.name} owes £#{otherUserAmount.toFixed(2)}
 
   br
   a(href=`/payments/${payment.id}/edit`) Edit
