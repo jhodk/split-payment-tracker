@@ -9,5 +9,5 @@ block content
     +paymentFormContent(true)
     br
     div
-      a(href=`/payments/${payment.id}`) Cancel
+      a(href=toSiteUrl(`/payments/${payment.id}`)) Cancel
       button(type="submit") Save changes
