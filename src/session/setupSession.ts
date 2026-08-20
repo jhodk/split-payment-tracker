@@ -14,6 +14,7 @@ export const setupSession = async (app: Express): Promise<void> => {
 			cookie: {
 				secure: isProduction(),
 				maxAge: ONE_MONTH_IN_MS,
+				path: config.basePath || '/',
 			},
 			name: 'sessionId',
 			store: await getRedisStore(),
