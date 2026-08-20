@@ -4,7 +4,7 @@ import { apiController } from './controllers/apiController.js'
 import { homeController } from './controllers/homeController.js'
 import { paymentController } from './controllers/paymentController.js'
 import { dbHealthCheck } from './database/prisma.js'
-import { prefixImageHost } from './helpers/viewHelper.js'
+import { prefixImageHost, toSiteUrl } from './helpers/viewHelper.js'
 import { requireBearerAuth } from './middleware/requireBearerAuth.js'
 import { requireLogin } from './middleware/requireLogin.js'
 import { setupSession } from './session/setupSession.js'
@@ -24,6 +24,7 @@ app.use(express.json({ limit: '4mb' }))
 app.use(express.urlencoded({ extended: true }))
 app.locals = {
 	prefixImageHost,
+	toSiteUrl,
 }
 
 if (isProduction()) {
@@ -38,8 +39,6 @@ app.use(homeController)
 app.use((_req, res) => {
 	res.redirect('/login')
 })
-
-app.locals.toSiteUrl = (path: string) => `${config.basePath}${path}`
 
 app.listen(config.port, '0.0.0.0', () => {
 	console.log(`Server running on http://0.0.0.0:${config.port}`)

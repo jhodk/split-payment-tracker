@@ -17,3 +17,5 @@ export const buildCategoryGroups = (categories: Category[]) => {
 			children: categories.filter((category) => category.parentCategoryId === parent.id),
 		}))
 }
+
+export const toSiteUrl = (path: string) => `${config.basePath}${path}`
