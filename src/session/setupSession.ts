@@ -16,7 +16,7 @@ export const setupSession = async (app: Express): Promise<void> => {
 				maxAge: ONE_MONTH_IN_MS,
 				path: config.basePath || '/',
 			},
-			name: 'sessionId',
+			name: 'sessionId-split-payment-tracker',
 			store: await getRedisStore(),
 		}),
 	)
