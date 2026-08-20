@@ -19,7 +19,7 @@ mixin paymentFormContent(isUpdate)
     )
 
   script(type="module").
-    import { inferCategory } from '/categoryHelper.js'
+    import { inferCategory } from '#{toSiteUrl('/categoryHelper.js')}'
 
     document.querySelector('#description').addEventListener('input', (event) => {
       const categoryId = inferCategory(event.target.value)
