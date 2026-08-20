@@ -2,10 +2,10 @@ extends ../layout.pug
 include _form-content.pug
 
 block content
-  a(href=`/payments#payment-${payment.id}`) &lt; Back
+  a(href=toSiteUrl(`/payments#payment-${payment.id}`)) &lt; Back
   h1 Edit payment
 
-  form(action=`/payments/${payment.id}/edit` method="post")
+  form(action=toSiteUrl(`/payments/${payment.id}/edit`) method="post")
     +paymentFormContent(true)
     br
     div

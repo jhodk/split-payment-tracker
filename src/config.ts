@@ -31,6 +31,7 @@ export const config = {
 	},
 	fileHost: process.env.FILE_HOST ?? '',
 	apiSecret: process.env.API_SECRET ?? randomUUID(),
+	basePath: process.env.BASE_PATH ?? '',
 }
 
 export const isProduction = (): boolean => config.nodeEnv === 'production'

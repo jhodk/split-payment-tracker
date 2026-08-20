@@ -4,11 +4,11 @@ include _form-content.pug
 block content
   - const backUrl = payment?.id !== undefined ? `/payments#payment-${payment.id}` : '/payments'
 
-  a(href=backUrl) &lt; Back
+  a(href=toSiteUrl(backUrl)) &lt; Back
   h1 Add payment
 
-  form(action="/payments" method="post")
+  form(action=toSiteUrl("/payments") method="post")
     +paymentFormContent(false)
     br
-    a(href="/") Cancel
+    a(href=toSiteUrl("/")) Cancel
     button(type="submit") Add payment

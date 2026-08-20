@@ -24,7 +24,7 @@ block content
             p #{payment.createdAt.toLocaleDateString('en-GB', { month: 'long',  year: 'numeric'})}
           - lastCreatedMonthYear = payment.createdAt.toLocaleDateString('en-GB', { month: 'long',  year: 'numeric'})
         li.payment
-          a(href=`/payments/${payment.id}` id=`payment-${payment.id}`)
+          a(href=toSiteUrl(`/payments/${payment.id}`) id=`payment-${payment.id}`)
             div.payment-date
               span.payment-date-month= payment.date.split(' ')[0]
               span.payment-date-day= payment.date.split(' ')[1]
@@ -58,4 +58,4 @@ block content
     p No payments yet.
 
   br
-  a(href='/logout') Log out
+  a(href=toSiteUrl("/logout")) Log out

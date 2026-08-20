@@ -39,6 +39,8 @@ app.use((_req, res) => {
 	res.redirect('/login')
 })
 
+app.locals.toSiteUrl = (path: string) => `${config.basePath}${path}`
+
 app.listen(config.port, () => {
 	console.log(`Server running on http://localhost:${config.port}`)
 })

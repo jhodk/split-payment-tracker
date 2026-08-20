@@ -1,7 +1,7 @@
 extends ../layout.pug
 
 block content
-  a(href=`/payments#payment-${payment.id}`) &lt; Back
+  a(href=toSiteUrl(`/payments#payment-${payment.id}`)) &lt; Back
   div 
     img(src=prefixImageHost(payment.category.icon) alt=payment.category.name title=payment.category.name)
     br
@@ -32,4 +32,4 @@ block content
           li #{otherUser.name} owes £#{otherUserAmount.toFixed(2)}
 
   br
-  a(href=`/payments/${payment.id}/edit`) Edit
+  a(href=toSiteUrl(`/payments/${payment.id}/edit`)) Edit

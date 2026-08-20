@@ -5,5 +5,5 @@ html
   body
     h1 Log in
 
-    form(action="/login" method="post")
+    form(action=toSiteUrl("/login") method="post")
       button(type="submit") Login
