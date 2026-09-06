@@ -14,15 +14,15 @@ block content
   br
   br
 
-  - let lastCreatedMonthYear = undefined
+  - let lastDateMonthYear = undefined
   if payments.length
     ul.payments
       each payment in payments
-        if lastCreatedMonthYear !== payment.createdAt.toLocaleDateString('en-GB', { month: 'long',  year: 'numeric'})
+        if lastDateMonthYear !== payment.date.toLocaleDateString('en-GB', { month: 'long',  year: 'numeric'})
           //- skip first month/year label
-          if lastCreatedMonthYear !== undefined
-            p #{payment.createdAt.toLocaleDateString('en-GB', { month: 'long',  year: 'numeric'})}
-          - lastCreatedMonthYear = payment.createdAt.toLocaleDateString('en-GB', { month: 'long',  year: 'numeric'})
+          if lastDateMonthYear !== undefined
+            p #{payment.date.toLocaleDateString('en-GB', { month: 'long',  year: 'numeric'})}
+          - lastDateMonthYear = payment.date.toLocaleDateString('en-GB', { month: 'long',  year: 'numeric'})
         li.payment
           a(href=toSiteUrl(`/payments/${payment.id}`) id=`payment-${payment.id}`)
             div.payment-date
