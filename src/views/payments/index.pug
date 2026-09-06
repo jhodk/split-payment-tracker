@@ -26,8 +26,8 @@ block content
         li.payment
           a(href=toSiteUrl(`/payments/${payment.id}`) id=`payment-${payment.id}`)
             div.payment-date
-              span.payment-date-month= payment.date.split(' ')[0]
-              span.payment-date-day= payment.date.split(' ')[1]
+              span.payment-date-month= payment.date.toLocaleDateString('en-US', {month: 'short', day: '2-digit'}).split(' ')[0]
+              span.payment-date-day= payment.date.toLocaleDateString('en-US', {month: 'short', day: '2-digit'}).split(' ')[1]
 
             img.payment-category-icon(
               src=prefixImageHost(payment.category.icon)

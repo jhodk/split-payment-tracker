@@ -163,6 +163,7 @@ export const paymentService = {
 					{
 						date: 'desc',
 					},
+					{ updatedAt: 'desc' },
 					{ createdAt: 'desc' },
 				],
 			}),
@@ -184,10 +185,6 @@ export const paymentService = {
 				...payment,
 				amount: paymentAmount.toFixed(2),
 				userBalance: userBalance.toFixed(2),
-				date: payment.date.toLocaleDateString('en-US', {
-					month: 'short',
-					day: '2-digit',
-				}),
 			}
 		})
 
